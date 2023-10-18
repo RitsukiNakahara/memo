@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="content-type" content="text/html" charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Introduce</title>
+    <style>
+    * {
+	margin:0; padding:0; 	/*全要素のマージン・パディングをリセット*/
+	line-height:1.5;	/*全要素の行の高さを1.5倍にする*/
+	color:#333333;		/*文字色*/} 
+
+    body {
+	background-color:#999999;	/*ページ全体の背景色*/
+	text-align:center;		/*IE6以下でセンタリングするための対策*/}
+    
+    div#pagebody {
+	width:796px; margin:0 auto;	/*内容全体をセンタリング*/
+	text-align:left;	/*テキストの配置を左揃えにする*/
+	background-image:url("images/bg_pagebody.gif");	/*内容全体の背景*/
+	background-repeat:repeat-y;		/*背景画像を縦方向に繰り返す*/
+	background-color:#ffffff;		/*内容全体の背景色*/}
+
+    div#header {
+	height:77px;	/*背景画像のサイズに合わせてボックスの高さを指定*/
+	background-color:#cccccc;		/*ヘッダ部分の背景色*/}
+
+    h1 {
+	padding:20px 0px 0px 30px;		/*見出し内容の位置調整*/
+	font-family:Arial, Helvetica, sans-serif;	/*フォントの種類*/}
+
+    ul#menu {
+	height:42px; background-color:#eeeeee; font-weight:bold;}
+
+    li#menu01,li#menu02,li#menu03 {
+	float:left;			/*リスト項目を横に並べる*/
+	display:inline;			/*リスト項目をインライン表示にする*/
+	list-style-type:none;		/*リストマーカー無しにする*/}
+
+    li#menu01 {
+	width:470px; height:42px;	/*背景画像に合わせたサイズ指定*/}
+    li#menu02 {
+	width:520px; height:42px;	/*背景画像に合わせたサイズ指定*/}
+    li#menu03 {
+	width:420px; height:42px;	/*背景画像に合わせたサイズ指定*/}
+
+    ul#menu a {
+	display:block;				/*リンクをブロック表示にする*/
+	height:42px; padding-top:4px; text-align:center;
+    text-decoration:none; 			/*リンクの下線を無くす*/
+	font-family:Arial, Helvetica, sans-serif;	/*フォントの種類*/}
+
+    div#content {
+	width:1450px; margin:50px 20px 10px 0px;	/*幅の指定と位置調整*/}
+
+    h2 {
+	font: size 100px; margin-bottom:10px;border-bottom:solid 10px #cccccc; margin:50px auto;}
+    
+    h3 {font-size:20px;}
+    
+    p {font-size:90%; margin:10px 0px 10px 10px; text-indent:10px;}
+
+    </style>
+    
+    <meta name="description" content="このWebサイトは、初めてHTMLで作るブログページです。">
+    <link rel="stylesheet" href="./css/style.css">
+
+  </head>
+
+  <body>
+    
+    <div id="pagebody"></div>
+    <div id="header"><h1>MY BLOG</h1></div>
+    
+    <ul id="menu">
+		<li id="menu01"><a href="xxx.html">HOME</a></li>
+		<li id="menu02"><a href="xxx.html">INTRODUCE</a></li>
+		<li id="menu03"><a href="xxx.html">CONTACT</a></li>
+	</ul>
+
+    <div id="content">
+		<div id="news">
+			<h2>HOME</h2>
+			<h3>WELCOME</h3>
+			<p>
+			Hello, my name is NR.
+			</p>
+			<p><img src="Introduce.jpeg" width="500" height="300" /></p>
+		</div>
+    </div>
+    
+    </body>
+
+</html>
