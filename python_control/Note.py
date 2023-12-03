@@ -33,3 +33,22 @@ ax.plot(t,y)
 plot_set(ax,"t","y")
 
 # %%
+def linestyle_generator():
+    linestyle=["-","--","-.",":"]
+    lineID=0
+    while True:
+        yield linestyle[lineID]
+        lineID=(lineID+1)%len(linestyle)
+
+# %%
+fig,ax=plt.subplots()
+LS=linestyle_generator()
+K=1
+T=[1,0.5,0.1]
+for i in range(len(T)):
+    y,t=step(tf([0,K],[T[i],1]),np.arange(0,5,0.01))
+    ax.plot(t,y,ls=next(LS),label="T="+str(T[i]))
+
+plot_set(ax,"t","y","best")
+
+# %%
