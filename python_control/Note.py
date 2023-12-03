@@ -61,4 +61,18 @@ for i in range(len(K)):
     ax.plot(t,y,ls=next(LS),label="K="+str(K[i]))
 
 plot_set(ax,"t","y","upper left")
+
+# %%
+import sympy as sp
+sp.init_printing()
+s=sp.Symbol("s")
+T=sp.Symbol("T",real=True)
+P=1/((1+T*s)*s)
+Q=sp.apart(P,s)
+print(Q)
+
+t=sp.Symbol("t",positive=True)
+q=sp.inverse_laplace_transform(Q,s,t)
+print(q)
+
 # %%
