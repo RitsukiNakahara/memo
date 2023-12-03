@@ -9,6 +9,6 @@ s4=tf([2,0],[0,1])
 s12=feedback(s1,s2)
 s123=series(s12,s3)
 s=feedback(s123,s4)
-print(s)
+print("S=",s)
 
 # %%
