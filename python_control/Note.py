@@ -76,3 +76,47 @@ q=sp.inverse_laplace_transform(Q,s,t)
 print(q)
 
 # %%
+zeta,omega_n=0.4,5
+
+P=tf([0,omega_n**2],[1,2*zeta*omega_n,omega_n**2])
+y,t=step(P,np.arange(0,5,0.01))
+
+fig,ax=plt.subplots()
+ax.plot(t,y)
+plot_set(ax,"t","y")
+
+# %%
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+
+zeta=[1,0.7,0.4]
+omega_n=5
+
+for i in range(len(zeta)):
+    P=tf([0,omega_n**2],[1,2*zeta[i]*omega_n,omega_n**2])
+    y,t=step(P,np.arange(0,5,0.01))
+
+    pltargs={"ls":next(LS)}
+    pltargs["label"]="$\zeta$="+str(zeta[i])
+    ax.plot(t,y,**pltargs)
+
+plot_set(ax,"t","y","best")
+
+# %%
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+
+zeta=0.4
+omega_n=[1,5,10]
+
+for i in range(len(omega_n)):
+    P=tf([0,omega_n[i]**2],[1,2*zeta*omega_n[i],omega_n[i]**2])
+    y,t=step(P,np.arange(0,5,0.01))
+
+    pltargs={"ls":next(LS)}
+    pltargs["label"]="$\omega_n$="+str(omega_n[i])
+    ax.plot(t,y,**pltargs)
+
+plot_set(ax,"t","y","best")
+
+# %%
