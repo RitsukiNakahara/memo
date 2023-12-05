@@ -135,4 +135,24 @@ fig,ax=plt.subplots()
 ax.plot(t,y)
 plot_set(ax,"t","y")
 
+# %% 状態空間モデルの時間応答
+A=[[0,1],[-4,-5]]
+B=[[0],[1]]
+C=np.eye(2)
+D=np.zeros([2,1])
+P=ss(A,B,C,D)
+Td=np.arange(0,5,0.01)
+Ud=1*(Td>0)
+
+xst,t=step(P,Td)
+xin,t=initial(P,Td,-0.3)
+x,_,_=lsim(P,Ud,Td,-0.3)
+
+fig,ax=plt.subplots()
+ax.plot(t,x[:,0],label="response")
+ax.plot(t,xst[:,0],ls="--",label="zero state")
+ax.plot(t,xin[:,0],ls="-.",label="zero input")
+
+plot_set(ax,"t","x","best")
+
 # %%
