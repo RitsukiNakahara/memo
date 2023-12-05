@@ -1,4 +1,4 @@
-#%%
+#%%　ブロック線図
 from control import tf,ss,series,feedback
 
 s1=tf([0,1],[1,1])
@@ -11,7 +11,7 @@ s123=series(s12,s3)
 s=feedback(s123,s4)
 print("S=",s)
 
-#%%
+#%%　グラフ整形
 def plot_set(fig_ax,*args):
     fig_ax.set_xlabel(args[0])
     fig_ax.set_ylabel(args[1])
@@ -19,7 +19,7 @@ def plot_set(fig_ax,*args):
     if len(args)==3:
         fig_ax.legend(loc=args[2])
 
-# %%
+# %%　1次遅れ系
 from control.matlab import *
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,7 +32,7 @@ fig,ax=plt.subplots()
 ax.plot(t,y)
 plot_set(ax,"t","y")
 
-# %%
+# %%　グラフ整形
 def linestyle_generator():
     linestyle=["-","--","-.",":"]
     lineID=0
@@ -40,7 +40,7 @@ def linestyle_generator():
         yield linestyle[lineID]
         lineID=(lineID+1)%len(linestyle)
 
-# %%
+# %%　1次遅れ系(T)
 fig,ax=plt.subplots()
 LS=linestyle_generator()
 K=1
@@ -51,7 +51,7 @@ for i in range(len(T)):
 
 plot_set(ax,"t","y","best")
 
-# %%
+# %%　1次遅れ系(K)
 fig,ax=plt.subplots()
 LS=linestyle_generator()
 T=0.5
@@ -62,7 +62,7 @@ for i in range(len(K)):
 
 plot_set(ax,"t","y","upper left")
 
-# %%
+# %%  逆ラプラス変換
 import sympy as sp
 sp.init_printing()
 s=sp.Symbol("s")
@@ -75,7 +75,7 @@ t=sp.Symbol("t",positive=True)
 q=sp.inverse_laplace_transform(Q,s,t)
 print(q)
 
-# %%
+# %%　2次遅れ系
 zeta,omega_n=0.4,5
 
 P=tf([0,omega_n**2],[1,2*zeta*omega_n,omega_n**2])
@@ -85,7 +85,7 @@ fig,ax=plt.subplots()
 ax.plot(t,y)
 plot_set(ax,"t","y")
 
-# %%
+# %%　2次遅れ系
 LS=linestyle_generator()
 fig,ax=plt.subplots()
 
@@ -102,7 +102,7 @@ for i in range(len(zeta)):
 
 plot_set(ax,"t","y","best")
 
-# %%
+# %%　2次遅れ系
 LS=linestyle_generator()
 fig,ax=plt.subplots()
 
@@ -118,5 +118,21 @@ for i in range(len(omega_n)):
     ax.plot(t,y,**pltargs)
 
 plot_set(ax,"t","y","best")
+
+# %%  ステップ応答練習問題
+P=tf([1,3],[1,3,2])
+y,t=step(P,np.arange(0,5,0.01))
+
+fig,ax=plt.subplots()
+ax.plot(t,y)
+plot_set(ax,"t","y")
+
+# %%　ステップ応答練習問題
+P=tf([0,1],[1,2,2,1])
+y,t=step(P,np.arange(0,5,0.01))
+
+fig,ax=plt.subplots()
+ax.plot(t,y)
+plot_set(ax,"t","y")
 
 # %%
