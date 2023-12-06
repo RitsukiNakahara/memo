@@ -155,4 +155,24 @@ ax.plot(t,xin[:,0],ls="-.",label="zero input")
 
 plot_set(ax,"t","x","best")
 
+# %%　状態空間モデル時間応答問題
+A=[[0,1],[-4,-5]]
+B=[[0],[1]]
+C=np.eye(2)
+D=np.zeros([2,1])
+P=ss(A,B,C,D)
+Td=np.arange(0,5,0.01)
+Ud=3*np.sin(5*Td)
+
+xst,t=step(P,Td)
+xin,t=initial(P,Td,0.5)
+x,_,_=lsim(P,Ud,Td,0.5)
+
+fig,ax=plt.subplots()
+ax.plot(t,x[:,0],label="response")
+ax.plot(t,xst[:,0],ls="--",label="zero state")
+ax.plot(t,xin[:,0],ls="-.",label="zero input")
+
+plot_set(ax,"t","x","best")
+
 # %%
