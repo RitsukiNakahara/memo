@@ -175,4 +175,27 @@ ax.plot(t,xin[:,0],ls="-.",label="zero input")
 
 plot_set(ax,"t","x","best")
 
+# %%  漸近安定性の判定
+w=1.5
+Y,X=np.mgrid[-w:w:100j,-w:w:100j]
+
+A=np.array([[0,1],[-4,5]])
+s,v=np.linalg.eig(A)
+
+U=A[0,0]*X+A[0,1]*Y
+V=A[1,0]*X+A[1,1]*Y
+
+t=np.arange(-1.5,1.5,0.01)
+
+fig,ax=plt.subplots()
+
+if s.imag[0]==0 and s.imag[1]==0:
+    ax.plot(t,v[1,0]/v[0,0]*t,ls="-")
+    ax.plot(t,v[1,1]/v[1,1]*t,ls="-")
+
+ax.streamplot(X,Y,U,V,density=0.7,color="k")
+plot_set(ax,"$x_1$","x_2")
+
+print(s)
+
 # %%
