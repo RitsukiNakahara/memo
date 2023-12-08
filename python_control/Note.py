@@ -241,4 +241,25 @@ for i in range(len(zeta)):
 
 bodeplot_set(ax,3,3)
 
+# %% ボード線図練習問題
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+P=tf([1,3],[1,3,2])
+gain,phase,w=bode(P,logspace(-2,2),plot=False)
+pltargs={"ls":next(LS)}
+ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax,1,1)
+
+# %%　ボード線図練習問題
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+P=tf([0,1],[1,2,2,1])
+gain,phase,w=bode(P,logspace(-2,2),plot=False)
+pltargs={"ls":next(LS)}
+ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax,1,1)
 # %%
