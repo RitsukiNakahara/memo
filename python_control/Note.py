@@ -401,4 +401,32 @@ for i in range(3):
 
 bodeplot_set(ax,"best")
 
+# %%　改良型PID制御
+kp=2
+kd=0.1
+ki=10
+
+K1=tf([kd,kp,ki],[1,0])
+K2=tf([0,ki],[kd,kp,ki])
+
+Gyz=feedback(P*K1,1)
+
+Td=np.arange(0,2,0.01)
+r=1*(Td>0)
+
+z,t,_=lsim(K2,r,Td,0)
+fig,ax=plt.subplots(1,2)
+
+y,_,_=lsim(Gyz,r,Td,0)
+ax[0].plot(t,r*ref,color="k")
+ax[1].plot(t,y*ref,ls="--",label="PID",color="k")
+
+y,_,_=lsim(Gyz,z,Td,0)
+ax[0].plot(t,z*ref,color="k")
+ax[1].plot(t,y*ref,label="PI-D",color="k")
+
+ax[1].axhline(ref,color="k",linewidth=0.5)
+plot_set(ax[0],"t","r")
+plot_set(ax[1],"t","r","best")
+
 # %%
