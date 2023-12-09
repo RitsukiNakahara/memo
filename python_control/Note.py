@@ -262,4 +262,45 @@ ax[0].semilogx(w,20*np.log10(gain),**pltargs)
 ax[1].semilogx(w,phase*180/np.pi,**pltargs)
 
 bodeplot_set(ax,1,1)
+
+# %%　P制御
+g=9.81
+l=0.2
+M=0.5
+mu=1.5e-2
+J=1.0e-2
+
+P=tf([0,1],[J,mu,M*g*l])
+
+ref=30
+
+kp=(0.5,1,2)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+for i in range(3):
+    K=tf([0,kp[i]],[0,1])
+    Gyr=feedback(P*K,1)
+    y,t=step(Gyr,np.arange(0,2,0.01))
+
+    pltargs={"ls":next(LS),"label":"$k_p=$"+str(kp[i])}
+    ax.plot(t,y*ref,**pltargs)
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y","best")
+
+# %% P制御ボード線図
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+
+for i in range(len(kp)):
+    K=tf([0,kp[i]],[0,1])
+    Gyr=feedback(P*K,1)
+
+    gain,phase,w=bode(Gyr,logspace(-1,2),plot=False)
+    pltargs={"ls":next(LS),"label":"$k_p=$"+str(kp[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax,"lower left")
 # %%
