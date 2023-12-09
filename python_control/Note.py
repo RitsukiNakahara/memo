@@ -519,4 +519,47 @@ f2=(kd+mu)/ki-3/(wn**2)
 f3=J/ki-1/(wn**3)
 sp.solve([f1,f2,f3],[kp,kd,ki])
 
+# %%　極配置法
+A="0 1;-4 5"
+B="0;1"
+C="1 0;0 1"
+D="0;0"
+P=ss(A,B,C,D)
+
+Pole=[-1,-1]
+F=-acker(P.A,P.B,Pole)
+
+Acl = P.A + P.B*F
+Pfb = ss(Acl, P.B, P.C, P.D)
+
+Td = np.arange(0, 5, 0.01)
+X0 = [-0.3, 0.4]
+x, t = initial(Pfb, Td, X0)
+
+fig, ax = plt.subplots(figsize=(3, 2.3))
+ax.plot(t, x[:,0], label = '$x_1$')
+ax.plot(t, x[:,1], ls = '-.', label = '$x_2$')
+
+plot_set(ax, 't', 'x', 'best')
+
+# %%　最適レギュレータ
+Q=[[100,0],[0,1]]
+R=1
+
+F,X,E=lqr(P.A,P.B,Q,R)
+F=-F
+
+Acl = P.A + P.B*F
+Pfb = ss(Acl, P.B, P.C, P.D)
+
+Td = np.arange(0, 5, 0.01)
+X0 = [-0.3, 0.4]
+x, t = initial(Pfb, Td, X0)
+
+fig, ax = plt.subplots(figsize=(3, 2.3))
+ax.plot(t, x[:,0], label = '$x_1$')
+ax.plot(t, x[:,1], ls = '-.', label = '$x_2$')
+
+plot_set(ax, 't', 'x', 'best')
+
 # %%
