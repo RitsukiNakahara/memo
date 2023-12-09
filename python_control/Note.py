@@ -304,7 +304,7 @@ for i in range(3):
 
 bodeplot_set(ax,"lower left")
 
-# %%　PI制御
+# %%　PD制御
 kp=2
 kd=(0,0.1,0.2)
 
@@ -321,7 +321,7 @@ for i in range(3):
 ax.axhline(ref,color="k",linewidth=0.5)
 plot_set(ax,"t","y","best")
 
-# %%　PI制御ボード線図
+# %%　PD制御ボード線図
 LS=linestyle_generator()
 fig,ax=plt.subplots(2,1)
 
