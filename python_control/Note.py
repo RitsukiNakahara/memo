@@ -293,7 +293,7 @@ plot_set(ax,"t","y","best")
 LS=linestyle_generator()
 fig,ax=plt.subplots(2,1)
 
-for i in range(len(kp)):
+for i in range(3):
     K=tf([0,kp[i]],[0,1])
     Gyr=feedback(P*K,1)
 
@@ -303,4 +303,37 @@ for i in range(len(kp)):
     ax[1].semilogx(w,phase*180/np.pi,**pltargs)
 
 bodeplot_set(ax,"lower left")
+
+# %%　PI制御
+kp=2
+kd=(0,0.1,0.2)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+for i in range(3):
+    K=tf([kd[i],kp],[0,1])
+    Gyr=feedback(P*K,1)
+    y,t=step(Gyr,np.arange(0,2,0.01))
+
+    pltargs={"ls":next(LS),"label":"$k_d=$"+str(kd[i])}
+    ax.plot(t,y*ref,**pltargs)
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y","best")
+
+# %%　PI制御ボード線図
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+
+for i in range(3):
+    K=tf([kd[i],kp],[0,1])
+    Gyr=feedback(P*K,1)
+
+    gain,phase,w=bode(Gyr,logspace(-1,2),plot=False)
+    pltargs={"ls":next(LS),"label":"$k_d=$"+str(kd[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax,"lower left")
+
 # %%
