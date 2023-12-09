@@ -336,4 +336,69 @@ for i in range(3):
 
 bodeplot_set(ax,"lower left")
 
+# %%　PID制御
+kp=2
+kd=0.1
+ki=(0,5,10)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+for i in range(3):
+    K=tf([kd,kp,ki[i]],[1,0])
+    Gyr=feedback(P*K,1)
+    y,t=step(Gyr,np.arange(0,2,0.01))
+
+    pltargs={"ls":next(LS),"label":"$k_i=$"+str(ki[i])}
+    ax.plot(t,y*ref,**pltargs)
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y","upper left")
+
+# %%　PID制御ボード線図
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+
+for i in range(3):
+    K=tf([kd,kp,ki[i]],[1,0])
+    Gyr=feedback(P*K,1)
+
+    gain,phase,w=bode(Gyr,logspace(-1,2),plot=False)
+    pltargs={"ls":next(LS),"label":"$k_i=$"+str(ki[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax,"best")
+
+# %%　PID制御練習問題
+kp=2
+kd=0.1
+ki=(0,5,10)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+for i in range(3):
+    K=tf([kd,kp,ki[i]],[1,0])
+    Gyd=feedback(P,K)
+    y,t=step(Gyd,np.arange(0,2,0.01))
+
+    pltargs={"ls":next(LS),"label":"$k_i=$"+str(ki[i])}
+    ax.plot(t,y,**pltargs)
+
+plot_set(ax,"t","y","center right")
+
+# %% PID制御練習問題
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+
+for i in range(3):
+    K=tf([kd,kp,ki[i]],[1,0])
+    Gyd=feedback(P,K)
+
+    gain,phase,w=bode(Gyd,logspace(-1,2),plot=False)
+    pltargs={"ls":next(LS),"label":"$k_i=$"+str(ki[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax,"best")
+
 # %%
