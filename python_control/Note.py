@@ -429,4 +429,39 @@ ax[1].axhline(ref,color="k",linewidth=0.5)
 plot_set(ax[0],"t","r")
 plot_set(ax[1],"t","r","best")
 
+# %%　限界感度法
+num_delay,den_delay=pade(0.005,1)
+Pdelay=P*tf(num_delay,den_delay)
+
+fig,ax=plt.subplots()
+
+kp0=2.9
+K=tf([0,kp0],[0,1])
+Gyr=feedback(Pdelay*K,1)
+y,t=step(Gyr,np.arange(0,2,0.01))
+
+ax.plot(t,y*ref,color="k")
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y")
+
+# %%　ゲインチューニング
+T0=0.3
+
+Rule="No Overshoot"
+kp=0.2*kp0
+ki=kp/(0.5*T0)
+kd=kp*(0.33*T0)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+
+K=tf([kd,kp,ki],[1,0])
+Gyr=feedback(Pdelay*K,1)
+y,t=step(Gyr,np.arange(0,2,0.01))
+
+ax.plot(t,y*ref,ls=next(LS),label=Rule)
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y","best")
+
 # %%
