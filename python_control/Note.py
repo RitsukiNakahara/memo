@@ -464,4 +464,59 @@ ax.plot(t,y*ref,ls=next(LS),label=Rule)
 ax.axhline(ref,color="k",linewidth=0.5)
 plot_set(ax,"t","y","best")
 
+# %%　モデルマッチング法
+import sympy as sp
+s=sp.Symbol("s")
+kp,kd,ki=sp.symbols("k_p k_d k_i")
+Mgl,mu,J=sp.symbols("Mgl,mu,J")
+sp.init_printing()
+
+G=(kp*s+ki)/(J*s**3+(mu+kd)*s**2+(Mgl+kp)*s+ki)
+sp.series(1/G,s,0,3)
+
+# %%
+wn=sp.symbols("omega_n")
+M=wn**2/(s**2+2*wn*s+wn**2)
+sp.series(1/M,s,0,3)
+
+# %%　
+z,wn=sp.symbols("zeta omega_n")
+kp,kd,ki=sp.symbols("k_p k_d k_i")
+Mgl,mu,J=sp.symbols("Mgl,mu,J")
+sp.init_printing()
+
+f1=Mgl/ki-2*z/wn
+f2=(mu+kd)/ki-Mgl*kp/(ki**2)-1/(wn**2)
+f3=J/ki-kp*(mu+kd)/(ki**2)+Mgl*kp**2/(ki**3)
+sp.solve([f1,f2,f3],[kp,kd,ki])
+
+# %%　ゲインチューニング
+#エラー
+
+# %%　モデルマッチング法練習問題
+import sympy as sp
+s=sp.Symbol("s")
+kp,kd,ki=sp.symbols("k_p k_d k_i")
+Mgl,mu,J=sp.symbols("Mgl,mu,J")
+sp.init_printing()
+
+G=(ki)/(J*s**3+(mu+kd)*s**2+(Mgl+kp)*s+ki)
+sp.series(1/G,s,0,4)
+
+#%% 
+wn=sp.symbols("omega_n")
+M=wn**3/(s**3+3*wn*s**2+3*wn**2*s+wn**3)
+sp.series(1/M,s,0,4)
+
+#%%
+z,wn=sp.symbols("zeta omega_n")
+kp,kd,ki=sp.symbols("k_p k_d k_i")
+Mgl,mu,J=sp.symbols("Mgl,mu,J")
+sp.init_printing()
+
+f1=(Mgl+kp)/ki-3/wn
+f2=(kd+mu)/ki-3/(wn**2)
+f3=J/ki-1/(wn**3)
+sp.solve([f1,f2,f3],[kp,kd,ki])
+
 # %%
