@@ -1009,3 +1009,42 @@ ax.plot(t, y*ref, lw =2, color='k')
 plot_set(ax, 't', 'y')
 ax.set_xlim(0, 2)
 ax.set_ylim(0, 60)
+
+#%%　デジタル実装
+P=tf([0,1],[0.5,1])
+ts=0.2
+Pd1=c2d(P,ts,method="zoh")
+Pd2=c2d(P,ts,method="tustin")
+
+fig,ax=plt.subplots(1,2)
+
+tc=np.arange(0,3,0.01)
+y,t=step(P,tc)
+ax[0].plot(t,y,ls="-.")
+ax[1].plot(t,y,ls="-.")
+
+T=np.arange(0,3,ts)
+y,t=step(Pd1,T)
+ax[0].plot(t,y,ls="",marker="o",label="zoh")
+y,t=step(Pd2,T)
+ax[1].plot(t,y,ls="",marker="o",label="tustin")
+
+
+
+# %%
+fig,ax=plt.subplots(1,2)
+
+tc=np.arange(0,3,0.01)
+Uc=0.5*np.sin(6*tc)+0.5*np.cos(8*tc)
+y,t,x0=lsim(P,Uc,tc)
+ax[0].plot(t,y,ls="-.")
+ax[1].plot(t,y,ls="-.")
+
+T=np.arange(0,3,ts)
+U=0.5*np.sin(6*T)+0.5*np.cos(8*T)
+y,t,x0=lsim(Pd1,U,T)
+ax[0].plot(t,y,ls="",marker="o",label="zoh")
+y,t,x0=lsim(Pd2,U,T)
+ax[1].plot(t,y,ls="",marker="o",label="tustin")
+
+# %%
