@@ -707,4 +707,52 @@ for i in range(3):
 ax.axhline(ref,color="k",linewidth=0.5)
 plot_set(ax,"t","y",4)
 
+# %%　設計前後の比較
+kp=(2,1)
+ki=(5,0)
+kd=(0.1,0)
+label=("After","Before")
+
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+for i in range(2):
+    K=tf([kd[i],kp[i],ki[i]],[1,0])
+    H=P*K
+    gain,phase,w=bode(H,logspace(-1,2),plot=False)
+
+    pltargs={"ls":next(LS),"label":label[i]}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax, 3)
+
+# %%
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+for i in range(2):
+    K=tf([kd[i],kp[i],ki[i]],[1,0])
+    Gyr=feedback(P*K,1)
+    Gyr=Gyr.minreal()
+    gain,phase,w=bode(Gyr,logspace(-1,2),plot=False)
+
+    pltargs={"ls":next(LS),"label":label[i]}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+bodeplot_set(ax, 3)
+
+# %%
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+for i in range(2):
+    K=tf([kd[i],kp[i],ki[i]],[1,0])
+    Gyr=feedback(P*K,1)
+    y,t=step(Gyr,np.arange(0,2,0.01))
+
+    pltargs={"ls":next(LS),"label":label[i]}
+    ax.plot(t,y*ref,**pltargs)
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y",1)
+
 # %%
