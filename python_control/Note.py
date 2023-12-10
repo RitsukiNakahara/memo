@@ -562,4 +562,59 @@ ax.plot(t, x[:,1], ls = '-.', label = '$x_2$')
 
 plot_set(ax, 't', 'x', 'best')
 
+# %%　開ループ系の安定性　
+P=tf([0,1],[1,1,1.5,1])
+_,_,wpc,_=margin(P)
+
+t=np.arange(0,30,0.1)
+u=np.sin(wpc*t)
+y=0*u
+
+fig,ax=plt.subplots(2,2)
+for i in range(2):
+    for j in range(2):
+        u=np.sin(wpc*t)-y
+        y,t,x0=lsim(P,u,t,0)
+        
+        ax[i,j].plot(t,u,ls="--",label="u")
+        ax[i,j].plot(t,y,label="y")
+        plot_set(ax[i,j],"t","u,y",)
+
+# %%
+P=tf([0,1],[1,2,2,1])
+_,_,wpc,_=margin(P)
+
+t=np.arange(0,30,0.1)
+u=np.sin(wpc*t)
+y=0*u
+
+fig,ax=plt.subplots(2,2)
+for i in range(2):
+    for j in range(2):
+        u=np.sin(wpc*t)-y
+        y,t,x0=lsim(P,u,t,0)
+        
+        ax[i,j].plot(t,u,ls="--",label="u")
+        ax[i,j].plot(t,y,label="y")
+        plot_set(ax[i,j],"t","u,y",)
+
+# %%　ナイキスト軌跡
+fig,ax=plt.subplots(1,2)
+
+P=tf([0,1],[1,1,1.5,1])
+x,y,_=nyquist(P,logspace(-3,5,1000),plot=False)
+ax[0].plot(x,y,color="k")
+ax[0].plot(x,-y,ls="--",color="k")
+ax[0].scatter(-1,0,color="k")
+plot_set(ax[0],"Re","Im")
+
+P=tf([0,1],[1,2,2,1])
+x,y,_=nyquist(P,logspace(-3,5,1000),plot=False)
+ax[1].plot(x,y,color="k")
+ax[1].plot(x,-y,ls="--",color="k")
+ax[1].scatter(-1,0,color="k")
+plot_set(ax[1],"Re","Im")
+
+fig.tight_layout()
+
 # %%
