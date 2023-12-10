@@ -755,4 +755,60 @@ for i in range(2):
 ax.axhline(ref,color="k",linewidth=0.5)
 plot_set(ax,"t","y",1)
 
+# %%　位相遅れ補償
+alpha=10
+T1=0.1
+K1=tf([alpha*T1,alpha],[alpha*T1,1])
+gain,phase,w=bode(K1,logspace(-2,3),plot=False)
+
+fig,ax=plt.subplots(2,1)
+ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+bodeplot_set(ax)
+
+# %%
+alpha=20
+T1=0.25
+K1=tf([alpha*T1,alpha],[alpha*T1,1])
+
+H1=P*K1
+gain,phase,w=bode(H1,logspace(-2,3),plot=False)
+
+fig,ax=plt.subplots(2,1)
+ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+bodeplot_set(ax)
+
+[mag], [phase], _ = freqresp(H1, [40])
+phaseH1at40 = phase * (180/np.pi)
+
+# %%　位相進み補償
+beta=0.1
+T2=1
+K2=tf([T2,1],[beta*T2,1])
+gain,phase,w=bode(K2,logspace(-2,3),plot=False)
+
+fig,ax=plt.subplots(2,1)
+ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+bodeplot_set(ax)
+
+# %%
+phim = (60- (180 + phaseH1at40 ) ) * np.pi/180
+beta = (1-np.sin(phim))/(1+np.sin(phim))
+T2 = 1/40/np.sqrt(beta)
+K2 = tf([T2, 1],[beta*T2, 1])
+
+H2=P*K1*K2
+gain,phase,w=bode(H2,logspace(-2,3),plot=False)
+
+fig,ax=plt.subplots(2,1)
+ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+bodeplot_set(ax)
+
+[mag], [phase], _ = freqresp(H2, [40])
+magH2at40 = mag
+phaseH2at40 = phase * (180/np.pi)
+
 # %%
