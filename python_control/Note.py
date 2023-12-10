@@ -811,4 +811,44 @@ bodeplot_set(ax)
 magH2at40 = mag
 phaseH2at40 = phase * (180/np.pi)
 
+# %%　ゲイン補償とループ整形の結果
+k=1/magH2at40
+
+H=P*K*K1*K2
+gain,phase,w=bode(H,logspace(-2,3),plot=False)
+
+fig,ax=plt.subplots(2,1)
+ax[0].semilogx(w,20*np.log10(gain),label="H")
+ax[1].semilogx(w,phase*180/np.pi,label="H")
+
+gain,phase,w=bode(P,logspace(-2,3),plot=False)
+
+ax[0].semilogx(w,20*np.log10(gain),label="P")
+ax[1].semilogx(w,phase*180/np.pi,label="P")
+bodeplot_set(ax,3)
+
 # %%
+fig,ax=plt.subplots()
+
+Gyr_H=feedback(H,1)
+y,t=step(Gyr_H,np.arange(0,2,0.01))
+ax.plot(t,y*ref,label="After")
+
+Gyr_P=feedback(P,1)
+y,t=step(Gyr_P,np.arange(0,2,0.01))
+ax.plot(t,y*ref,label="Before")
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y","best")
+
+# %%
+fig,ax=plt.subplots(2,1)
+gain,phase,w=bode(Gyr_H,logspace(-2,3),plot=False)
+ax[0].semilogx(w,20*np.log10(gain),label="H")
+ax[1].semilogx(w,phase*180/np.pi,label="H")
+
+gain,phase,w=bode(Gyr_P,logspace(-2,3),plot=False)
+ax[0].semilogx(w,20*np.log10(gain),label="P")
+ax[1].semilogx(w,phase*180/np.pi,label="P")
+
+bodeplot_set(ax,3)
