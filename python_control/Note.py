@@ -852,3 +852,50 @@ ax[0].semilogx(w,20*np.log10(gain),label="P")
 ax[1].semilogx(w,phase*180/np.pi,label="P")
 
 bodeplot_set(ax,3)
+
+# %%　オブザーバ
+A="0 1; -4 5"
+B="0; 1"
+C="1 0"
+D="0"
+P=ss(A,B,C,D)
+
+observer_poles=[-15+5j,-15-5j]
+
+L=-acker(P.A.T,P.C.T,observer_poles).T
+
+fig,ax=plt.subplots(2,1)
+Td=np.arange(0,3,0.01)
+X0=[-1,0.5]
+
+regulator_poles=[-5+5j,-5-5j]
+F=-acker(P.A,P.B,regulator_poles)
+
+Gsf=ss(P.A+P.B*F,P.B,np.eye(2),[[0],[0]])
+x,t=initial(Gsf,Td,X0)
+ax[0].plot(t,x[:,0],ls="-.",label="x1")
+ax[1].plot(t,x[:,1],ls="-.",label="x2")
+
+u=[[F[0,0]*x[i,0]+F[0,1]*x[i,1]] for i in range(len(x))]
+y=x[:,0]
+Obs=ss(P.A+L*P.C,np.c_[P.B,-L],np.eye(2),[[0,0],[0,0]])
+xhat,t,x0=lsim(Obs,np.c_[u,y],np.arange(0,3,0.01),[0,0])
+ax[0].plot(t,xhat[:,0],ls="-.",label="xhat1")
+ax[1].plot(t,xhat[:,1],ls="-.",label="xhat2")
+
+for i in [0,1]:
+    plot_set(ax[i],"t","","best")
+ax[0].set_ylabel("x1,xhat1")
+ax[1].set_ylabel("x2,xhat2")
+
+# %%
+K=ss(P.A+P.B*F+L*P.C,-L,F,0)
+Gfb=feedback(P,K,sign=1)
+fig,ax=plt.subplots()
+y,t=initial(P,np.arange(0,3,0.01),[-1,0.5])
+ax.plot(t,y,ls="-.",label="feedback off")
+y,t=initial(Gfb,np.arange(0,3,0.01),[-1,0.5,0,0])
+ax.plot(t,y,ls="-.",label="feedback on")
+plot_set(ax,"t","y","best")
+
+# %%
