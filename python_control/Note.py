@@ -898,4 +898,114 @@ y,t=initial(Gfb,np.arange(0,3,0.01),[-1,0.5,0,0])
 ax.plot(t,y,ls="-.",label="feedback on")
 plot_set(ax,"t","y","best")
 
+# %%　ロバスト制御(コピー)
+g  = 9.81                # 重力加速度[m/s^2]
+l  = 0.2                 # アームの長さ[m]
+M  = 0.5                 # アームの質量[kg]
+mu = 1.5e-2              # 粘性摩擦係数
+J  = 1.0e-2              # 慣性モーメント
+
+P = tf( [0,1], [J, mu, M*g*l] )
+
+ref = 30 # 目標角度 [deg]
+
+# 垂直駆動アームのノミナルモデル
+Pn = tf( [0,1], [J, mu, M*g*l] )
+
+# Pn = tf( [0, 1], [1, 1])
+# 不確かさ
+delta = np.arange(-1, 1 , 0.1)
+WT = tf( [10, 0], [1, 150])
+
+fig, ax = plt.subplots(1, 2, figsize=(6,2.3))
+# fig, ax = plt.subplots(1, 2)
+
+for i in range(len(delta)):
+    # 不確かさをもつ制御対象
+    P = (1 + WT*delta[i])*Pn
+    gain, _, w = bode(P, logspace(-3,3), Plot=False)
+
+    ax[0].semilogx(w, 20*np.log10(gain), color = 'k', lw = 0.3)
+    
+    # 乗法的不確かさ
+    DT = (P - Pn)/Pn
+    gain, _, w = bode(DT, logspace(-3,3), Plot=False)
+
+    ax[1].semilogx(w, 20*np.log10(gain), color = 'k', lw = 0.3)
+
+gain, phase, w = bode(Pn, logspace(-3,3), Plot=False)
+ax[0].semilogx(w, 20*np.log10(gain), lw =2, color='k')
+
+gain, phase, w = bode(WT, logspace(-3,3), Plot=False)
+ax[1].semilogx(w, 20*np.log10(gain), lw =2, color='k')
+
+ax[0].set_ylim(-100, 50)
+ax[1].set_ylim(-100, 50)
+bodeplot_set(ax)
+ax[0].set_xlabel('$\omega$ [rad/s]')
+ax[0].set_ylabel('Gain of $P$ [dB]')
+ax[1].set_ylabel('Gain of $\Delta W_T/P$ [dB]')
+#ax.grid(which="both", ls=':')
+#ax.set_ylabel('Gain [dB]')
+#ax.set_xlabel('$\omega$ [rad/s]')
+
+fig.tight_layout()
+
 # %%
+from control import mixsyn
+
+WS = tf( [0, 1], [1, 1, 0.25]) # 感度関数に対する重み関数 
+WU = tf(1, 1)
+WT = tf( [10, 0], [1, 150]) # 相補感度関数に対する重み関数
+
+# 混合感度問題
+K, _, gamma = mixsyn(Pn, w1=WS , w2=WU, w3=WT) 
+
+print('K=', ss2tf(K))
+print('gamma =', gamma[0])
+
+fig, ax = plt.subplots(1, 2, figsize=(6,2.3))
+
+# 感度関数
+Ssys = feedback(1, Pn*K)
+gain, _, w = bode(Ssys, logspace(-3,3), Plot=False)
+ax[0].semilogx(w, 20*np.log10(gain), ls= '-', lw =2, label='$S$', color='k')
+
+gain, _, w = bode(1/WS, logspace(-3,3), Plot=False)
+ax[0].semilogx(w, 20*np.log10(gain), ls= '-.', lw =1, label='$1/W_S$', color='k')
+
+# 相補感度関数
+Tsys = feedback(Pn*K, 1)
+gain, _, w = bode(Tsys, logspace(-3,3), Plot=False)
+ax[1].semilogx(w, 20*np.log10(gain), ls = '-', lw =2, label='$T$', color='k')
+
+gain, _, w = bode(1/WT, logspace(-3,3), Plot=False)
+ax[1].semilogx(w, 20*np.log10(gain), ls= '--', lw =1, label='$1/W_T$', color='k')
+
+for i in range(2):
+    ax[i].set_ylim(-40, 40)
+    ax[i].legend()
+    ax[i].grid(which="both", ls=':')
+    ax[i].set_ylabel('Gain [dB]')
+    ax[i].set_xlabel('$\omega$ [rad/s]')
+
+fig.tight_layout()
+
+# %%
+fig, ax = plt.subplots(figsize=(3, 2.3))
+
+for i in range(len(delta)):
+    P = (1 + WT*delta[i])*Pn
+    Gyr = feedback(P*K, 1)
+    
+    y, t = step(Gyr, np.arange(0,5,0.01))
+
+    ax.plot(t, y*ref, color ='k', lw =0.3)
+
+Gyr = feedback(Pn*K, 1)
+y, t = step(Gyr, np.arange(0,5,0.01))
+ax.plot(t, y*ref, lw =2, color='k')
+
+plot_set(ax, 't', 'y')
+ax.set_xlim(0, 2)
+ax.set_ylim(0, 60)
