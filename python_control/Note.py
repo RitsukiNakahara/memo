@@ -1029,8 +1029,6 @@ ax[0].plot(t,y,ls="",marker="o",label="zoh")
 y,t=step(Pd2,T)
 ax[1].plot(t,y,ls="",marker="o",label="tustin")
 
-
-
 # %%
 fig,ax=plt.subplots(1,2)
 
