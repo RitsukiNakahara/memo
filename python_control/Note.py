@@ -617,4 +617,94 @@ plot_set(ax[1],"Re","Im")
 
 fig.tight_layout()
 
+# %%　開ループ系P制御
+g  = 9.81                
+l  = 0.2                 
+M  = 0.5                 
+mu = 1.5e-2              
+J  = 1.0e-2              
+
+P = tf( [0,1], [J, mu, M*g*l] )
+
+ref = 30
+
+kp=(0.5,1,2)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+for i in range(3):
+    K=tf([0,kp[i]],[0,1])
+    H=P*K
+    gain,phase,w=bode(H,logspace(-1,2),plot=False)
+
+    pltargs={"ls":next(LS),"label":"$k_p=$"+str(kp[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+    print('kP=', kp[i])
+    print('(GM, PM, wpc, wgc)')
+    print(margin(H))
+    print('-----------------')
+    
+bodeplot_set(ax, 3)
+
+# %%　開ループ系PI制御
+kp=2
+ki=(0,5,10)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+for i in range(3):
+    K=tf([kp,ki[i]],[1,0])
+    H=P*K
+    gain,phase,w=bode(H,logspace(-1,2),plot=False)
+
+    pltargs={"ls":next(LS),"label":"$k_i$="+str(ki[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+    print('ki=', ki[i])
+    print('(GM, PM, wpc, wgc)')
+    print(margin(H))
+    print('-----------------')
+    
+bodeplot_set(ax, 3)
+
+# %%　開ループ系PID制御
+kp=2
+ki=5
+kd=(0,0.1,0.2)
+
+LS=linestyle_generator()
+fig,ax=plt.subplots(2,1)
+for i in range(3):
+    K=tf([kd[i],kp,ki],[1,0])
+    H=P*K
+    gain,phase,w=bode(H,logspace(-1,2),plot=False)
+
+    pltargs={"ls":next(LS),"label":"$k_d=$"+str(kd[i])}
+    ax[0].semilogx(w,20*np.log10(gain),**pltargs)
+    ax[1].semilogx(w,phase*180/np.pi,**pltargs)
+
+    print('kd=', kd[i])
+    print('(GM, PM, wpc, wgc)')
+    print(margin(H))
+    print('-----------------')
+    
+bodeplot_set(ax, 3)
+
+# %%　閉ループ系ステップ応答
+LS=linestyle_generator()
+fig,ax=plt.subplots()
+for i in range(3):
+    K=tf([kd[i],kp,ki],[1,0])
+    Gyd=feedback(P*K,1)
+    y,t=step(Gyd,np.arange(0,2,0.01))
+
+    pltargs={"ls":next(LS),"label":"$k_d=$"+str(kd[i])}
+    ax.plot(t,y*ref,**pltargs)
+
+ax.axhline(ref,color="k",linewidth=0.5)
+plot_set(ax,"t","y",4)
+
 # %%
